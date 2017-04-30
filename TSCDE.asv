@@ -52,13 +52,13 @@ b=min(100,n+n1); % Number of kernel bases
   V2_dist2_cv=repmat(sum(y_train_cv.^2,1),[b 1])+repmat(sum(cl_y.^2,1)',[1 n_cv])-2*cl_y'*y_train_cv;%(l1 x n)
   u_dist2_cv=repmat(sum(x_test_cv.^2,1),[n+n1 1])+repmat(sum(cl_x.^2,1)',[1 n1_cv])-2*cl_x'*x_test_cv;% (n+n1)x n1
   U_dist2_cv=repmat(sum(cl_x.^2,1),[n+n1 1])+repmat(sum(cl_x.^2,1)',[1 n+n1])-2*cl_x'*cl_x;% (n+n1)x (n+n1)
-  X=[];iter=2;l2_dist=[];DIST=[];
+  X=[];l2_dist=[];DIST=[];
   for out_index=1:length(ky_list)% outer loop  of ky and lamda
     ky=ky_list(out_index);lamda=lamda_list(out_index);out_index    
     for in_index=1:length(kx_list) %inner loop  of kx and delta
-        kx=kx_list(in_index);delta=delta_list(in_index);   
-        DIST=[];X1=[];
-        for cv=1:iter          
+        DIST=[];
+        for cv=1:fold
+      kx=kx_list(in_index);delta=delta_list(in_index);       
       U=(sqrt(pi)*kx)^d_x*exp(-U_dist2/(4*kx^2));       
       phi_ucap=exp(-u_dist2/(2*kx^2));
       ucap=mean(phi_ucap,2);       
@@ -75,8 +75,8 @@ b=min(100,n+n1); % Number of kernel bases
       lb=zeros(b,1);ub=inf;
       options = optimset('Algorithm','interior-point-convex');
       [x,fval,exitflag] = quadprog(H,f,[],[],Aeq,beq,lb,[],[],options); %adding options with interior-point convergence
-       
-      X1=[X1 x];
+      X=[X x]; 
+      
       %%%%%%%%%%%%%%% CV LOOP %%%%%%%%%%%%%%%%%
       U_cv=(sqrt(pi)*kx)^d_x*exp(-U_dist2_cv/(4*kx^2));       
       phi_ucap_cv=exp(-u_dist2_cv/(2*kx^2));
@@ -96,7 +96,7 @@ b=min(100,n+n1); % Number of kernel bases
       
       %%%%%%%%%%%%%%END CV LOOP%%%%%%%%%%%
         end %cv loop
-        l2_dist=[l2_dist mean(DIST)];X=[X mean(X1,2)];
+        l2_dist=[l2_dist mean(DIST)];
     end % for inner loop
    end % for outer loop
   [val,ind]=min(l2_dist);

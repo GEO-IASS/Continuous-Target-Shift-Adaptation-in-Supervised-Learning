@@ -30,7 +30,8 @@ xtest_normalized=(xtest-xmean)./repmat(xscale,[1 ntest]);
 ytest_normalized=(ytest-ymean)./repmat(yscale,[1 ntest]);
 xtest2=xtest;ytest2=ytest;MSE=[];
 %%%%%%%%%%%%%%%%%%%%%%%%% Estimating weights%%%%%%%%%%%%%%
-for ITER=1:1
+for ITER=1:5
+ disp('Iteration Number'); ITER
  w=TSCDE(xtrain_normalized,ytrain_normalized,...
           xtest_normalized,ytest_normalized);
 
@@ -52,18 +53,20 @@ axis_limit=[2 10 0 4];
 [ph,ph_error,MSE1]=LSCDE(xtrain_normalized,ytrain_normalized,...
          xtest_normalized,ytest_normalized,w);
  MSE=[MSE MSE1];
- ITER    
+    
  end
-
-
+disp('Avg MSE = ')
+mean(MSE)
+disp('Std Dev of MSE = ')
+std(MSE)
 figure(1);clf;hold on
 set(gca,'FontName','Helvetica')
 set(gca,'FontSize',12)
 plot(ydisp,ptr_ydisp,'b-','LineWidth',2)
 plot(ydisp,pte_ydisp,'k-','LineWidth',2)
 plot(ydisp,w_ydisp,'r-','LineWidth',2)
-plot(ytrain,w,'g*','LineWidth',2,'Color',[0 200 0]/255)
-legend('p_{tr}(y)','p_{te}(y)','w(y)','w-hat(y)',2)
+%plot(ytrain(1:length(ytrain)/2),w,'g*','LineWidth',2,'Color',[0 200 0]/255)
+legend('p_{tr}(y)','p_{te}(y)','w(y)',2)
 xlabel('y')
 
 

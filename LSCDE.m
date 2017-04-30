@@ -28,6 +28,7 @@ loss_type='KL';
 sigma_list=logspace(-1.5,1.5,9); % Candidates of Gaussian width
 lambda_list=logspace(-3,1,9); % Candidates of regularization parameter
 cc=eps;
+x_train=x_train(1,1:length(x_train)/2); y_train=y_train(1:length(y_train)/2);
 [d_x,n]=size(x_train);
 [d_y,n]=size(y_train);
 fold=5; % Number of folds of cross-validation
